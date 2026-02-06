@@ -1,11 +1,11 @@
 # 🎵 WilsonOS Spotify DJ Service
 
 **Model:** Claude Sonnet 4  
-**Czas:** 20250908_204435
+**Czas:** 20250909_175338
 
 ## 📋 Opis
 
-WilsonOS Spotify DJ Service to zaawansowany system do kontroli odtwarzania muzyki przez API Spotify. Serwis umożliwia wyszukiwanie utworów, płynne przejścia między utworami, kontrolę głośności oraz zarządzanie urządzeniami odtwarzającymi.
+WilsonOS Spotify DJ Service to zaawansowany system do kontroli odtwarzania muzyki przez API Spotify. Serwis umożliwia wyszukiwanie utworów, płynne przejścia między utworami, kontrolę głośności, zarządzanie urządzeniami odtwarzającymi oraz pełne zarządzanie playlistami.
 
 ## 🚀 Funkcje
 
@@ -17,7 +17,9 @@ WilsonOS Spotify DJ Service to zaawansowany system do kontroli odtwarzania muzyk
 - ✅ **Zarządzanie urządzeniami** - przełączanie między urządzeniami
 
 ### Zaawansowane
-- ✅ **Płynne przejścia** - fade in/out między utworami
+- ✅ **Playlisty** - odtwarzanie całych playlist (3 metody fallback)
+- ✅ **Kolejka** - dodawanie utworów do kolejki
+- ✅ **Zarządzanie playlistami** - tworzenie, edycja, usuwanie playlist
 - ✅ **Automatyczne odświeżanie tokenów** - bez przerywania sesji
 - ✅ **Obsługa błędów** - szczegółowe komunikaty błędów
 - ✅ **Logowanie** - śledzenie wywołań API
@@ -72,6 +74,94 @@ curl -X POST "http://wilsonos.com/spotify_api_simple.php/play" \
   -d '{"track_id": "ID_UTWORU", "position_ms": 128000}'
 ```
 
+#### Odtwarzanie playlisty
+```bash
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/play-playlist" \
+  -H "Content-Type: application/json" \
+  -d '{"artist": "ARTYSTA", "limit": 10}'
+```
+
+#### Zarządzanie kolejką
+```bash
+# Dodaj utwór do kolejki
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/add-to-queue" \
+  -H "Content-Type: application/json" \
+  -d '{"track_id": "ID_UTWORU"}'
+
+# Sprawdź status kolejki (informacyjnie)
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/clear-queue"
+```
+
+#### Tworzenie playlist
+```bash
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/create-playlist" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Moja Playlista",
+    "description": "Opis playlisty",
+    "tracks": ["ID1", "ID2", "ID3"],
+    "public": false
+  }'
+```
+
+#### Zarządzanie playlistami
+```bash
+# Lista wszystkich playlist
+curl "http://wilsonos.com/spotify_api_simple.php/playlist-management"
+
+# Zmiana nazwy playlisty
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/playlist-management" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "rename",
+    "playlist_id": "ID_PLAYLISTY",
+    "new_name": "Nowa nazwa"
+  }'
+
+# Aktualizacja opisu
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/playlist-management" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "update_description",
+    "playlist_id": "ID_PLAYLISTY",
+    "description": "Nowy opis"
+  }'
+
+# Usuwanie playlisty
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/playlist-management" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "delete",
+    "playlist_id": "ID_PLAYLISTY"
+  }'
+
+# Lista utworów w playlisty
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/playlist-management" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "get_tracks",
+    "playlist_id": "ID_PLAYLISTY"
+  }'
+
+# Dodawanie utworów do playlisty
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/playlist-management" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "add_tracks",
+    "playlist_id": "ID_PLAYLISTY",
+    "tracks": ["ID1", "ID2", "ID3"]
+  }'
+
+# Usuwanie utworów z playlisty
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/playlist-management" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "remove_tracks",
+    "playlist_id": "ID_PLAYLISTY",
+    "tracks": ["ID1", "ID2", "ID3"]
+  }'
+```
+
 #### Kontrola odtwarzania
 ```bash
 # Pauza
@@ -117,17 +207,33 @@ curl -X POST "http://wilsonos.com/spotify_api_simple.php/play" \
   -d '{"track_id": "SKOPIOWANY_ID"}'
 ```
 
-#### Scenariusz 2: Płynne przejście między utworami
+#### Scenariusz 2: Odtwórz playlistę artysty
 ```bash
-# 1. Odtwórz pierwszy utwór
-curl -X POST "http://wilsonos.com/spotify_api_simple.php/play" \
+# Odtwórz 10 utworów artysty
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/play-playlist" \
   -H "Content-Type: application/json" \
-  -d '{"track_id": "ID_UTWORU_1"}'
+  -d '{"artist": "Pink Floyd", "limit": 10}'
+```
 
-# 2. Po chwili odtwórz drugi utwór (automatycznie wyciszy pierwszy)
-curl -X POST "http://wilsonos.com/spotify_api_simple.php/play" \
+#### Scenariusz 3: Utwórz i odtwórz playlistę
+```bash
+# 1. Wyszukaj utwory
+curl "http://wilsonos.com/spotify_api_simple.php/search?query=ambient&limit=5"
+
+# 2. Utwórz playlistę z utworami
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/create-playlist" \
   -H "Content-Type: application/json" \
-  -d '{"track_id": "ID_UTWORU_2"}'
+  -d '{
+    "name": "Moja Ambient Playlista",
+    "description": "Relaksująca muzyka ambient",
+    "tracks": ["ID1", "ID2", "ID3", "ID4", "ID5"],
+    "public": false
+  }'
+
+# 3. Dodaj utwory do kolejki
+curl -X POST "http://wilsonos.com/spotify_api_simple.php/add-to-queue" \
+  -H "Content-Type: application/json" \
+  -d '{"track_id": "ID1"}'
 ```
 
 ## 🔧 Rozwiązywanie problemów
@@ -150,6 +256,14 @@ curl -X POST "http://wilsonos.com/spotify_api_simple.php/play" \
 1. Wykonaj autoryzację OAuth (patrz sekcja "Instalacja")
 2. Upewnij się, że jesteś zalogowany do Spotify
 
+### Problem: Playlista odtwarza tylko jeden utwór
+**Rozwiązanie:**
+- API używa 3 metod fallback do odtwarzania playlist
+- Metoda 1: `uris` array (preferowana)
+- Metoda 2: Tworzenie tymczasowej playlisty
+- Metoda 3: Odtwarzanie tylko pierwszego utworu
+- Sprawdź logi API dla szczegółów
+
 ## 📁 Struktura projektu
 
 ```
@@ -160,33 +274,47 @@ wilsonos-dj/
 ├── refresh_token.php         # Odświeżanie tokenów
 ├── config.ini               # Konfiguracja
 ├── playlists/               # Playlisty CSV
+│   ├── dj-wilson/           # Playlisty DJ Wilson
+│   │   ├── csv/             # Pliki CSV
+│   │   └── *.md             # Dokumentacja playlist
+│   └── ...                  # Inne playlisty
 ├── doc/                     # Dokumentacja
 └── analysis/                # Analizy i dokumenty
 ```
 
 ## 🎯 Funkcje zaawansowane
 
-### Płynne przejścia (SpotifyService.php)
+### Odtwarzanie playlist (3 metody fallback)
 ```php
-$spotify = new SpotifyService();
+// Metoda 1: uris array (preferowana)
+$data = ['uris' => $uris, 'position_ms' => 0];
+makeSpotifyRequest('me/player/play', 'PUT', $data);
 
-// Płynne przejście między utworami
-$spotify->smoothTransition($newTrackId, $positionMs, $fadeDurationMs);
+// Metoda 2: Tymczasowa playlista
+$playlist = makeSpotifyRequest("users/$userId/playlists", 'POST', $playlistData);
+makeSpotifyRequest('me/player/play', 'PUT', ['context_uri' => $playlist['uri']]);
 
-// Fade out aktualnego utworu
-$spotify->fadeOutCurrentTrack($durationMs);
-
-// Fade in nowego utworu
-$spotify->fadeInTrack($trackId, $positionMs, $durationMs);
+// Metoda 3: Tylko pierwszy utwór
+makeSpotifyRequest('me/player/play', 'PUT', ['uris' => [$uris[0]]]);
 ```
 
-### Zarządzanie urządzeniami
+### Zarządzanie playlistami
 ```php
-// Pobierz dostępne urządzenia
-$devices = $spotify->getAvailableDevices();
+// Utwórz playlistę
+$playlist = makeSpotifyRequest("users/$userId/playlists", 'POST', $playlistData);
 
-// Ustaw aktywne urządzenie
-$spotify->setActiveDevice($deviceId);
+// Dodaj utwory (maksymalnie 100 na raz)
+$chunks = array_chunk($trackUris, 100);
+foreach ($chunks as $chunk) {
+    makeSpotifyRequest("playlists/$playlistId/tracks", 'POST', ['uris' => $chunk]);
+}
+
+// Usuń utwory
+makeSpotifyRequest("playlists/$playlistId/tracks", 'DELETE', [
+    'tracks' => array_map(function($uri) {
+        return ['uri' => $uri];
+    }, $trackUris)
+]);
 ```
 
 ## 📊 Status serwisu
@@ -219,4 +347,4 @@ Serwis jest w pełni funkcjonalny i gotowy do użycia. Wszystkie podstawowe i za
 
 ---
 
-**Ostatnia aktualizacja:** 2025-09-08 20:44:35
+**Ostatnia aktualizacja:** 2025-09-09 17:53:38

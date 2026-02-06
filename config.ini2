@@ -1,0 +1,26 @@
+SPOTIFY_CLIENT_ID="627de7fd6310465c8ee7e61246637520"
+SPOTIFY_CLIENT_SECRET="da3f8488bee34e5ba606f4019fd716ce"
+REDIRECT_URI="https://wilsonos.com/oauth_callback.php"
+ACCESS_TOKEN="BQDiUYny6gU2JOsksR-bzP3_OqUXTW_tc0dQaMuRmudw0Znqs9fEFbtMzgu-VrRnz82e2l4j5iLLCT174hU_gptyPIuCAyuHf0RPYUqjy8RqHzWa_CdpharILFQm3SOmFyKDAFkd_WUg0DeDE-pqk5J17gAb9x8FNsWuTJzj7MIyt34w3dGLpABepueBDNssRPe3M4zP4jFTg007om3nMr131Pg2H3YIIWLgJvzTQvUSplZHNDYVYd1vvB4"
+
+WILSONOS_HTTP="http://wilsonos.com/"
+WILSONOS_HOST="wilsone.cluster100.hosting.ovh.net"
+WILSONOS_FTP="ftp.cluster100.hosting.ovh.net:21"
+WILSONOS_SFTP="ftp.cluster100.hosting.ovh.net:22"
+WILSONOS_FTP_CLUSTER="ftp://wilsone@ftp.cluster100.hosting.ovh.net:21"
+WILSONOS_LOGIN="wilsone"
+WILSONOS_PASSWORD="P5AprE4a"
+
+# WilsonOS Services
+WILSONOS_OPENWEATHER="http://wilsonos.com/weather"
+WILSONOS_VOICE="http://wilsonos.com/voice"
+WILSONOS_NEWS="http://wilsonos.com/news"
+WILSONOS_TRENDS="http://wilsonos.com/trends"
+
+DATABASE_NAME="wilsonewilsondj"
+DATABASE_LOGIN="wilsonewilsondj"
+DATABASE_PASSWORD="C3N4czkPtRQQ2"
+
+
+
+
